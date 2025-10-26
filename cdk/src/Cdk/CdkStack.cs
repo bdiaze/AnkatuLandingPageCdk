@@ -14,7 +14,7 @@ namespace Cdk
 {
     public class CdkStack : Stack
     {
-        internal CdkStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
+        internal CdkStack(Construct scope, string id, CdkStackProps props = null) : base(scope, id, props)
         {
             string appName = System.Environment.GetEnvironmentVariable("APP_NAME") ?? throw new ArgumentNullException("APP_NAME");
             string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
@@ -22,19 +22,6 @@ namespace Cdk
             string distributionDomainNames = System.Environment.GetEnvironmentVariable("DISTRIBUTION_DOMAIN_NAMES") ?? throw new ArgumentNullException("DISTRIBUTION_DOMAIN_NAMES");
             string rootObject = System.Environment.GetEnvironmentVariable("ROOT_OBJECT") ?? throw new ArgumentNullException("ROOT_OBJECT");
             string buildDirectory = System.Environment.GetEnvironmentVariable("BUILD_DIR") ?? throw new ArgumentNullException("BUILD_DIR");
-
-            HostedZone hostedZone = new (this, $"{appName}HostedZone", new HostedZoneProps {
-                Comment = $"{appName} Hosted Zone",
-                ZoneName = domainName
-            });
-
-            // Se crea certificado para custom domain...
-            Certificate certificate = new(this, $"{appName}Certificate", new CertificateProps {
-                CertificateName = $"{appName}Certificate",
-                DomainName = domainName,
-                SubjectAlternativeNames = alternativeNames.Split(","),
-                Validation = CertificateValidation.FromDns(hostedZone),
-            });
 
             // Se crea bucket donde se almacenará aplicación frontend...  
             Bucket bucket = new(this, $"{appName}LandingPageS3Bucket", new BucketProps {
@@ -48,7 +35,7 @@ namespace Cdk
             Distribution distribution = new(this, $"{appName}LandingPageDistribution", new DistributionProps {
                 Comment = $"{appName} Landing Page Distribution",
                 DomainNames = distributionDomainNames.Split(","),
-                Certificate = certificate,
+                Certificate = props.Certificate,
                 DefaultRootObject = rootObject,
                 DefaultBehavior = new BehaviorOptions {
                     Origin = S3BucketOrigin.WithOriginAccessControl(bucket),
@@ -69,7 +56,7 @@ namespace Cdk
             string[] distrDomainNames = distributionDomainNames.Split(",");
             for (int i = 0; i < distrDomainNames.Length; i++) {
                 _ = new ARecord(this, $"{appName}LandingPageARecord{i + 1}", new ARecordProps {
-                    Zone = hostedZone,
+                    Zone = props.HostedZone,
                     RecordName = distrDomainNames[i],
                     Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
                 });

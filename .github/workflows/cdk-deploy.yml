@@ -16,6 +16,7 @@ jobs:
             APP_NAME: ${{ vars.APP_NAME }}
             ACCOUNT_AWS: ${{ vars.ACCOUNT_AWS }}
             REGION_AWS: ${{ vars.REGION_AWS }}
+            CERTIFICATE_REGION_AWS: ${{ vars.CERTIFICATE_REGION_AWS }}
             DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
             ALTERNATIVE_NAMES: ${{ vars.ALTERNATIVE_NAMES }}
             DISTRIBUTION_DOMAIN_NAMES: ${{ vars.DISTRIBUTION_DOMAIN_NAMES }}
