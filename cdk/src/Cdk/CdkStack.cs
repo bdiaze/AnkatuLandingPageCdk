@@ -66,10 +66,11 @@ namespace Cdk
             });
 
             // Se crea record en hosted zone...
-            foreach (string distrDomainName in distributionDomainNames.Split(",")) {
-                _ = new ARecord(this, $"{appName}LandingPageARecord", new ARecordProps {
+            string[] distrDomainNames = distributionDomainNames.Split(",");
+            for (int i = 0; i < distrDomainNames.Length; i++) {
+                _ = new ARecord(this, $"{appName}LandingPageARecord{i + 1}", new ARecordProps {
                     Zone = hostedZone,
-                    RecordName = distrDomainName,
+                    RecordName = distrDomainNames[i],
                     Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
                 });
             }
