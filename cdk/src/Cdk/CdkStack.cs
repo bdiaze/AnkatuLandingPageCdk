@@ -8,6 +8,7 @@ using Amazon.CDK.AWS.S3;
 using Amazon.CDK.AWS.S3.Deployment;
 using Constructs;
 using System;
+using System.Linq;
 
 namespace Cdk
 {
@@ -21,6 +22,7 @@ namespace Cdk
             string buildDirectory = System.Environment.GetEnvironmentVariable("BUILD_DIR")!;
             string rootObject = System.Environment.GetEnvironmentVariable("ROOT_OBJECT")!;
             string subdomainName = System.Environment.GetEnvironmentVariable("SUBDOMAIN_NAME") ?? throw new ArgumentNullException("SUBDOMAIN_NAME");
+            string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
 
             // Se obtiene el certificado existente...
             ICertificate certificate = Certificate.FromCertificateArn(this, $"{appName}Certificate", arnCertificate);
@@ -37,12 +39,12 @@ namespace Cdk
                 RemovalPolicy = RemovalPolicy.DESTROY,
                 BlockPublicAccess = BlockPublicAccess.BLOCK_ALL,
             });
-
+            
             // Se crea distribución de cloudfront...
             Distribution distribution = new(this, $"{appName}LandingPageDistribution", new DistributionProps {
                 Comment = $"{appName} Landing Page Distribution",
                 DefaultRootObject = rootObject,
-                DomainNames = [subdomainName],
+                DomainNames = [.. new string[] { subdomainName }, .. alternativeNames.Split(',')],
                 DefaultBehavior = new BehaviorOptions {
                   Origin = S3BucketOrigin.WithOriginAccessControl(bucket),
                   Compress = true,

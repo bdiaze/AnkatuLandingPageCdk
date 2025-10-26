@@ -21,6 +21,7 @@ jobs:
             BUILD_DIR: ${{ vars.BUILD_DIR }}
             ROOT_OBJECT: ${{ vars.ROOT_OBJECT }}
             SUBDOMAIN_NAME: ${{ vars.SUBDOMAIN_NAME }}
+            ALTERNATIVE_NAMES: ${{ vars.ALTERNATIVE_NAMES }}
         steps:
             - name: Checkout Repositorio
               uses: actions/checkout@v4
