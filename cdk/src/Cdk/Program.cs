@@ -25,6 +25,7 @@ namespace Cdk
             });
 
             new CdkStack(app, $"Cdk{appName}LandingPage", new CdkStackProps() {
+                CrossRegionReferences = true,
                 Env = new Amazon.CDK.Environment {
                   Account = accountAws,
                   Region = regionAws,
