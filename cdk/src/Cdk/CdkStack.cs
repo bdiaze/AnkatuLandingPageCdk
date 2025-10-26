@@ -17,19 +17,23 @@ namespace Cdk
         internal CdkStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
             string appName = System.Environment.GetEnvironmentVariable("APP_NAME") ?? throw new ArgumentNullException("APP_NAME");
-            string arnCertificate = System.Environment.GetEnvironmentVariable("CERTIFICATE_ARN")!;
             string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
-            string buildDirectory = System.Environment.GetEnvironmentVariable("BUILD_DIR")!;
-            string rootObject = System.Environment.GetEnvironmentVariable("ROOT_OBJECT")!;
-            string subdomainName = System.Environment.GetEnvironmentVariable("SUBDOMAIN_NAME") ?? throw new ArgumentNullException("SUBDOMAIN_NAME");
             string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
+            string distributionDomainNames = System.Environment.GetEnvironmentVariable("DISTRIBUTION_DOMAIN_NAMES") ?? throw new ArgumentNullException("DISTRIBUTION_DOMAIN_NAMES");
+            string rootObject = System.Environment.GetEnvironmentVariable("ROOT_OBJECT") ?? throw new ArgumentNullException("ROOT_OBJECT");
+            string buildDirectory = System.Environment.GetEnvironmentVariable("BUILD_DIR") ?? throw new ArgumentNullException("BUILD_DIR");
 
-            // Se obtiene el certificado existente...
-            ICertificate certificate = Certificate.FromCertificateArn(this, $"{appName}Certificate", arnCertificate);
+            HostedZone hostedZone = new (this, $"{appName}HostedZone", new HostedZoneProps {
+                Comment = $"{appName} Hosted Zone",
+                ZoneName = domainName
+            });
 
-            // Se obtiene el hosted zone existente...
-            IHostedZone hostedZone = HostedZone.FromLookup(this, $"{appName}HostedZone", new HostedZoneProviderProps {
-              DomainName = domainName,
+            // Se crea certificado para custom domain...
+            Certificate certificate = new(this, $"{appName}Certificate", new CertificateProps {
+                CertificateName = $"{appName}Certificate",
+                DomainName = domainName,
+                SubjectAlternativeNames = alternativeNames.Split(","),
+                Validation = CertificateValidation.FromDns(hostedZone),
             });
 
             // Se crea bucket donde se almacenará aplicación frontend...  
@@ -43,27 +47,15 @@ namespace Cdk
             // Se crea distribución de cloudfront...
             Distribution distribution = new(this, $"{appName}LandingPageDistribution", new DistributionProps {
                 Comment = $"{appName} Landing Page Distribution",
-                DefaultRootObject = rootObject,
-                DomainNames = [.. new string[] { subdomainName }, .. alternativeNames.Split(',')],
-                DefaultBehavior = new BehaviorOptions {
-                  Origin = S3BucketOrigin.WithOriginAccessControl(bucket),
-                  Compress = true,
-                  AllowedMethods = AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-                  ViewerProtocolPolicy = ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-                },
+                DomainNames = distributionDomainNames.Split(","),
                 Certificate = certificate,
-                ErrorResponses = [
-                    new ErrorResponse {
-                        HttpStatus = 403,
-                        ResponseHttpStatus = 200,
-                        ResponsePagePath = $"/{rootObject}",
-                    },
-                    new ErrorResponse {
-                        HttpStatus = 404,
-                        ResponseHttpStatus = 200,
-                        ResponsePagePath = $"/{rootObject}",
-                    },
-                ]
+                DefaultRootObject = rootObject,
+                DefaultBehavior = new BehaviorOptions {
+                    Origin = S3BucketOrigin.WithOriginAccessControl(bucket),
+                    Compress = true,
+                    AllowedMethods = AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+                    ViewerProtocolPolicy = ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+                },
             });
 
             // Se despliegan piezas del frontend en el bucket...
@@ -74,11 +66,13 @@ namespace Cdk
             });
 
             // Se crea record en hosted zone...
-            _ = new ARecord(this, $"{appName}LandingPageARecord", new ARecordProps {
-                Zone = hostedZone,
-                RecordName = subdomainName,
-                Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
-            });
+            foreach (string distrDomainName in distributionDomainNames.Split(",")) {
+                _ = new ARecord(this, $"{appName}LandingPageARecord", new ARecordProps {
+                    Zone = hostedZone,
+                    RecordName = distrDomainName,
+                    Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
+                });
+            }
         }
     }
 }

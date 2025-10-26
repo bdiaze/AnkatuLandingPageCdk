@@ -16,12 +16,11 @@ jobs:
             APP_NAME: ${{ vars.APP_NAME }}
             ACCOUNT_AWS: ${{ vars.ACCOUNT_AWS }}
             REGION_AWS: ${{ vars.REGION_AWS }}
-            CERTIFICATE_ARN: ${{ vars.CERTIFICATE_ARN }}
             DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
-            BUILD_DIR: ${{ vars.BUILD_DIR }}
-            ROOT_OBJECT: ${{ vars.ROOT_OBJECT }}
-            SUBDOMAIN_NAME: ${{ vars.SUBDOMAIN_NAME }}
             ALTERNATIVE_NAMES: ${{ vars.ALTERNATIVE_NAMES }}
+            DISTRIBUTION_DOMAIN_NAMES: ${{ vars.DISTRIBUTION_DOMAIN_NAMES }}
+            ROOT_OBJECT: ${{ vars.ROOT_OBJECT }}
+            BUILD_DIR: ${{ vars.BUILD_DIR }}
         steps:
             - name: Checkout Repositorio
               uses: actions/checkout@v4
