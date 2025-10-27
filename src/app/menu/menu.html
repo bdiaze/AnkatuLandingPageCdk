@@ -1,0 +1,111 @@
+<header
+    [class.shadow-md]="isScrolled"
+    class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+>
+    <nav class="max-w-6xl mx-auto flex items-center justify-between px-6 md:px-8 lg:px-12 h-16">
+        <!-- Logo -->
+        <div class="text-2xl font-bold text-sky-600 cursor-pointer" (click)="scrollTo('hero')">
+            Ankatu
+        </div>
+
+        <!-- Desktop menu -->
+        <ul class="hidden md:flex gap-8 text-gray-700 font-medium">
+            <li>
+                <button
+                    (click)="scrollTo('nuestros-productos')"
+                    class="hover:text-sky-600 transition"
+                >
+                    Nuestros Productos
+                </button>
+            </li>
+            <li>
+                <button
+                    (click)="scrollTo('por-que-elegirnos')"
+                    class="hover:text-sky-600 transition"
+                >
+                    ¿Por Qué Elegirnos?
+                </button>
+            </li>
+            <li>
+                <button (click)="scrollTo('quienes-somos')" class="hover:text-sky-600 transition">
+                    ¿Quiénes Somos?
+                </button>
+            </li>
+            <li>
+                <button
+                    (click)="scrollTo('nuestros-clientes')"
+                    class="hover:text-sky-600 transition"
+                >
+                    Nuestros Clientes
+                </button>
+            </li>
+        </ul>
+
+        <!-- CTA button (desktop) -->
+        <div class="hidden md:block">
+            <button hlmBtn>Contáctanos</button>
+        </div>
+
+        <!-- Mobile menu button -->
+        <button
+            class="md:hidden text-gray-700 focus:outline-none"
+            (click)="isMenuOpen = !isMenuOpen"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                @if (!isMenuOpen) {
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                    />
+                } @else {
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                }
+            </svg>
+        </button>
+    </nav>
+    <!-- Mobile dropdown -->
+    @if (isMenuOpen) {
+        <div
+            class="md:hidden bg-white shadow-md border-t border-gray-100 flex flex-col px-6 py-4 space-y-4"
+        >
+            <button
+                (click)="scrollTo('nuestros-productos')"
+                class="text-left text-gray-700 hover:text-sky-600"
+            >
+                Nuestros Productos
+            </button>
+            <button
+                (click)="scrollTo('por-que-elegirnos')"
+                class="text-left text-gray-700 hover:text-sky-600"
+            >
+                ¿Por Qué Elegirnos?
+            </button>
+            <button
+                (click)="scrollTo('quienes-somos')"
+                class="text-left text-gray-700 hover:text-sky-600"
+            >
+                ¿Quiénes Somos?
+            </button>
+            <button
+                (click)="scrollTo('nuestros-clientes')"
+                class="text-left text-gray-700 hover:text-sky-600"
+            >
+                Nuestros Clientes
+            </button>
+            <button hlmBtn>Contáctanos</button>
+        </div>
+    }
+</header>

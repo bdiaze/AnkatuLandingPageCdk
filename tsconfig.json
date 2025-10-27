@@ -18,6 +18,39 @@
       ],
       "@spartan-ng/helm/utils": [
         "./libs/ui/ui-utils-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/icon": [
+        "./libs/ui/ui-icon-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/sidebar": [
+        "./libs/ui/ui-sidebar-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/input": [
+        "./libs/ui/ui-input-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/separator": [
+        "./libs/ui/ui-separator-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/sheet": [
+        "./libs/ui/ui-sheet-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/tooltip": [
+        "./libs/ui/ui-tooltip-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/skeleton": [
+        "./libs/ui/ui-skeleton-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/menu": [
+        "./libs/ui/ui-menu-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/button-group": [
+        "./libs/ui/ui-button-group-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/card": [
+        "./libs/ui/ui-card-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/empty": [
+        "./libs/ui/ui-empty-helm/src/index.ts"
       ]
     }
   },

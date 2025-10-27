@@ -1,6 +1,6 @@
-@import '@angular/cdk/overlay-prebuilt.css';
+@use 'tailwindcss';
 
-@import 'tailwindcss';
+@import '@angular/cdk/overlay-prebuilt.css';
 
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
