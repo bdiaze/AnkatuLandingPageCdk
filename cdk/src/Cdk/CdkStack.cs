@@ -6,6 +6,7 @@ using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.Route53.Targets;
 using Amazon.CDK.AWS.S3;
 using Amazon.CDK.AWS.S3.Deployment;
+using Amazon.CDK.AWS.SES;
 using Constructs;
 using System;
 using System.Linq;
@@ -17,11 +18,11 @@ namespace Cdk
         internal CdkStack(Construct scope, string id, CdkStackProps props = null) : base(scope, id, props)
         {
             string appName = System.Environment.GetEnvironmentVariable("APP_NAME") ?? throw new ArgumentNullException("APP_NAME");
-            string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
-            string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
             string distributionDomainNames = System.Environment.GetEnvironmentVariable("DISTRIBUTION_DOMAIN_NAMES") ?? throw new ArgumentNullException("DISTRIBUTION_DOMAIN_NAMES");
             string rootObject = System.Environment.GetEnvironmentVariable("ROOT_OBJECT") ?? throw new ArgumentNullException("ROOT_OBJECT");
             string buildDirectory = System.Environment.GetEnvironmentVariable("BUILD_DIR") ?? throw new ArgumentNullException("BUILD_DIR");
+            string mailFromDomain = System.Environment.GetEnvironmentVariable("MAIL_FROM_DOMAIN") ?? throw new ArgumentNullException("MAIL_FROM_DOMAIN");
+
 
             // Se crea bucket donde se almacenará aplicación frontend...  
             Bucket bucket = new(this, $"{appName}LandingPageS3Bucket", new BucketProps {
@@ -43,6 +44,20 @@ namespace Cdk
                     AllowedMethods = AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                     ViewerProtocolPolicy = ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                 },
+                ErrorResponses = [
+                    new ErrorResponse {
+                        HttpStatus = 403,
+                        ResponseHttpStatus = 200,
+                        ResponsePagePath = $"/{rootObject}",
+                        Ttl = Duration.Days(1),
+                    },
+                    new ErrorResponse {
+                        HttpStatus = 404,
+                        ResponseHttpStatus = 200,
+                        ResponsePagePath = $"/{rootObject}",
+                        Ttl = Duration.Days(1),
+                    },
+                ]
             });
 
             // Se despliegan piezas del frontend en el bucket...
@@ -61,6 +76,18 @@ namespace Cdk
                     Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
                 });
             }
+
+            IPublicHostedZone publicHostedZone = PublicHostedZone.FromPublicHostedZoneAttributes(this, $"{appName}PublicHostedZone", new PublicHostedZoneAttributes {
+                ZoneName = props.HostedZone.ZoneName,
+                HostedZoneId = props.HostedZone.HostedZoneId,
+            });
+
+            // Se crea email identity para envío de correos...
+            EmailIdentity emailIdentity = new(this, $"{appName}EmailIdentity", new EmailIdentityProps {
+                Identity = Identity.PublicHostedZone(publicHostedZone),
+                MailFromDomain = mailFromDomain,
+                MailFromBehaviorOnMxFailure = MailFromBehaviorOnMxFailure.USE_DEFAULT_VALUE,
+            });
         }
     }
 }

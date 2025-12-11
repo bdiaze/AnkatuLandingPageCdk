@@ -7,4 +7,11 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
     templateUrl: './hero.html',
     styleUrl: './hero.scss',
 })
-export class Hero {}
+export class Hero {
+    scrollTo(sectionId: string) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+}

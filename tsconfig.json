@@ -51,6 +51,9 @@
       ],
       "@spartan-ng/helm/empty": [
         "./libs/ui/ui-empty-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/badge": [
+        "./libs/ui/ui-badge-helm/src/index.ts"
       ]
     }
   },

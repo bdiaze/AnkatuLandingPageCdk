@@ -22,6 +22,7 @@ jobs:
             DISTRIBUTION_DOMAIN_NAMES: ${{ vars.DISTRIBUTION_DOMAIN_NAMES }}
             ROOT_OBJECT: ${{ vars.ROOT_OBJECT }}
             BUILD_DIR: ${{ vars.BUILD_DIR }}
+            MAIL_FROM_DOMAIN: ${{ vars.MAIL_FROM_DOMAIN }}
         steps:
             - name: Checkout Repositorio
               uses: actions/checkout@v4

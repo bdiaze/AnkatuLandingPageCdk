@@ -1,6 +1,6 @@
 <header
     [class.shadow-md]="isScrolled"
-    class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+    class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-sky-50"
 >
     <nav class="max-w-6xl mx-auto flex items-center justify-between px-6 md:px-8 lg:px-12 h-16">
         <!-- Logo -->
@@ -15,7 +15,7 @@
                     (click)="scrollTo('nuestros-productos')"
                     class="hover:text-sky-600 transition"
                 >
-                    Nuestros Productos
+                    Nuestros productos
                 </button>
             </li>
             <li>
@@ -23,22 +23,24 @@
                     (click)="scrollTo('por-que-elegirnos')"
                     class="hover:text-sky-600 transition"
                 >
-                    ¿Por Qué Elegirnos?
+                    ¿Por qué elegirnos?
                 </button>
             </li>
             <li>
                 <button (click)="scrollTo('quienes-somos')" class="hover:text-sky-600 transition">
-                    ¿Quiénes Somos?
+                    ¿Quiénes somos?
                 </button>
             </li>
+            <!--
             <li>
                 <button
                     (click)="scrollTo('nuestros-clientes')"
                     class="hover:text-sky-600 transition"
                 >
-                    Nuestros Clientes
+                    Nuestros clientes
                 </button>
             </li>
+            -->
         </ul>
 
         <!-- CTA button (desktop) -->
@@ -79,32 +81,35 @@
     <!-- Mobile dropdown -->
     @if (isMenuOpen) {
         <div
-            class="md:hidden bg-white shadow-md border-t border-gray-100 flex flex-col px-6 py-4 space-y-4"
+            class="md:hidden shadow-md border-t border-gray-100 flex flex-col px-6 py-4 space-y-4 bg-sky-50"
         >
+            <hlm-separator />
             <button
                 (click)="scrollTo('nuestros-productos')"
                 class="text-left text-gray-700 hover:text-sky-600"
             >
-                Nuestros Productos
+                Nuestros productos
             </button>
             <button
                 (click)="scrollTo('por-que-elegirnos')"
                 class="text-left text-gray-700 hover:text-sky-600"
             >
-                ¿Por Qué Elegirnos?
+                ¿Por qué elegirnos?
             </button>
             <button
                 (click)="scrollTo('quienes-somos')"
                 class="text-left text-gray-700 hover:text-sky-600"
             >
-                ¿Quiénes Somos?
+                ¿Quiénes somos?
             </button>
+            <!--
             <button
                 (click)="scrollTo('nuestros-clientes')"
                 class="text-left text-gray-700 hover:text-sky-600"
             >
-                Nuestros Clientes
+                Nuestros clientes
             </button>
+            -->
             <button hlmBtn>Contáctanos</button>
         </div>
     }

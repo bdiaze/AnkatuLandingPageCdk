@@ -1,23 +1,29 @@
-<section id="productos" class="py-20 bg-gray-50">
-    <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-semibold mb-10">Nuestros Productos</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
-            <div spartanCard class="p-6 rounded-2xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-semibold mb-2">Gestor360</h3>
-                <p class="text-gray-600 mb-4">CRM inteligente para tus equipos de venta.</p>
-                <button hlmBtn variant="outline">Ver más</button>
+<section class="h-[100vh] flex flex-col justify-center items-center text-center">
+    <div class="container">
+        <h2 class="text-3xl font-semibold mb-10">Nuestros productos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-6">
+            <div
+                hlmCard
+                class="p-6 rounded-2xl shadow hover:shadow-lg transition text-card-foreground"
+            >
+                <h3 hlmCardTitle class="text-xl font-semibold mb-2">¿Qué tal mi AFP?</h3>
+                <p hlmCardContent class="text-gray-600 mb-4">
+                    CRM inteligente para tus equipos de venta.
+                </p>
+                <a href="https://www.quetalmiafp.cl" target="_blank" hlmBtn variant="outline"
+                    >Ver más</a
+                >
             </div>
 
-            <div spartanCard class="p-6 rounded-2xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-semibold mb-2">FactuPro</h3>
-                <p class="text-gray-600 mb-4">Facturación electrónica y control financiero.</p>
-                <button hlmBtn variant="outline">Ver más</button>
-            </div>
-
-            <div spartanCard class="p-6 rounded-2xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-semibold mb-2">DataPulse</h3>
-                <p class="text-gray-600 mb-4">Analítica y dashboards en tiempo real.</p>
-                <button hlmBtn variant="outline">Ver más</button>
+            <div
+                hlmCard
+                class="p-6 rounded-2xl shadow hover:shadow-lg transition text-card-foreground"
+            >
+                <div hlmCardHeader class="justify-center items-center">
+                    <span hlmBadge variant="secondary">En Construcción</span>
+                    <h3 hlmCardTitle class="text-xl font-semibold mb-2">Al Día</h3>
+                </div>
+                <p hlmCardContent class="text-gray-600 mb-4">Plataforma</p>
             </div>
         </div>
     </div>
