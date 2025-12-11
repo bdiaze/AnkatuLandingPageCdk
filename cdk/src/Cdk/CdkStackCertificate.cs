@@ -21,6 +21,7 @@ namespace Cdk {
             string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
             string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
             string workmailFromDomain = System.Environment.GetEnvironmentVariable("WORKMAIL_FROM_DOMAIN") ?? throw new ArgumentNullException("WORKMAIL_FROM_DOMAIN");
+            string ownershipTxtRecord = System.Environment.GetEnvironmentVariable("OWNERSHIP_TXT_RECORD") ?? throw new ArgumentNullException("OWNERSHIP_TXT_RECORD");
 
             // Se crea hosted zone...
             HostedZone = new(this, $"{appName}HostedZone", new HostedZoneProps {
@@ -46,6 +47,34 @@ namespace Cdk {
                 Identity = Identity.PublicHostedZone(publicHostedZone),
                 MailFromDomain = workmailFromDomain,
                 MailFromBehaviorOnMxFailure = MailFromBehaviorOnMxFailure.USE_DEFAULT_VALUE,
+            });
+
+            // Para integración con WorkMail se crean registros en DNS...
+            _ = new TxtRecord(this, $"{appName}SPF1TXTRecord", new TxtRecordProps {
+                Zone = HostedZone,
+                RecordName = HostedZone.ZoneName,
+                Values = ["v=spf1 include:amazonses.com ~all"]
+            });
+
+            _ = new MxRecord(this, $"{appName}MXRecord", new MxRecordProps {
+                Zone = HostedZone,
+                RecordName = HostedZone.ZoneName,
+                Values = [new MxRecordValue {
+                    HostName = $"inbound-smtp.us-east-1.amazonaws.com.",
+                    Priority = 10
+                }]
+            });
+
+            _ = new CnameRecord(this, $"{appName}CNAMEAutodiscoverRecord", new CnameRecordProps {
+                Zone = HostedZone,
+                RecordName = $" autodiscover.{HostedZone.ZoneName}",
+                DomainName = "autodiscover.mail.us-east-1.awsapps.com."
+            });
+
+            _ = new TxtRecord(this, $"{appName}OwnershipTXTRecord", new TxtRecordProps {
+                Zone = HostedZone,
+                RecordName = $"_amazonses.{HostedZone.ZoneName}",
+                Values = [ownershipTxtRecord]
             });
         }
     }

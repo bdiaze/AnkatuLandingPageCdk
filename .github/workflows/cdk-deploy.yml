@@ -25,6 +25,7 @@ jobs:
             MAIL_FROM_DOMAIN: ${{ vars.MAIL_FROM_DOMAIN }}
             WORKMAIL_FROM_DOMAIN: ${{ vars.WORKMAIL_FROM_DOMAIN }}
             DMARC_VALUE: ${{ vars.DMARC_VALUE }}
+            OWNERSHIP_TXT_RECORD: ${{ vars.OWNERSHIP_TXT_RECORD }}
         steps:
             - name: Checkout Repositorio
               uses: actions/checkout@v4
