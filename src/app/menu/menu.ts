@@ -19,10 +19,10 @@ export class Menu {
         this.isScrolled = window.scrollY > 20;
     }
 
-    scrollTo(sectionId: string) {
+    scrollTo(sectionId: string, block: ScrollLogicalPosition = 'center') {
         const element = document.getElementById(sectionId);
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.scrollIntoView({ behavior: 'smooth', block: block });
             this.isMenuOpen = false;
         }
     }
