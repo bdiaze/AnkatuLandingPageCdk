@@ -22,6 +22,7 @@ namespace Cdk
             string rootObject = System.Environment.GetEnvironmentVariable("ROOT_OBJECT") ?? throw new ArgumentNullException("ROOT_OBJECT");
             string buildDirectory = System.Environment.GetEnvironmentVariable("BUILD_DIR") ?? throw new ArgumentNullException("BUILD_DIR");
             string mailFromDomain = System.Environment.GetEnvironmentVariable("MAIL_FROM_DOMAIN") ?? throw new ArgumentNullException("MAIL_FROM_DOMAIN");
+            string dmarcValue = System.Environment.GetEnvironmentVariable("DMARC_VALUE") ?? throw new ArgumentNullException("DMARC_VALUE");
 
 
             // Se crea bucket donde se almacenará aplicación frontend...  
@@ -87,6 +88,13 @@ namespace Cdk
                 Identity = Identity.PublicHostedZone(publicHostedZone),
                 MailFromDomain = mailFromDomain,
                 MailFromBehaviorOnMxFailure = MailFromBehaviorOnMxFailure.USE_DEFAULT_VALUE,
+            });
+
+            // Se configura DMARC para el dominio...
+            _ = new TxtRecord(this, $"{appName}DMARCTXTRecord", new TxtRecordProps {
+                Zone = props.HostedZone,
+                RecordName = $"_dmarc.{props.HostedZone.ZoneName}",
+                Values = [dmarcValue]
             });
         }
     }

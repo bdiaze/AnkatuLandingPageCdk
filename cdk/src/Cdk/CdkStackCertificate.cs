@@ -1,6 +1,7 @@
 using Amazon.CDK;
 using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.Route53;
+using Amazon.CDK.AWS.SES;
 using Constructs;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Cdk {
             string appName = System.Environment.GetEnvironmentVariable("APP_NAME") ?? throw new ArgumentNullException("APP_NAME");
             string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
             string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
+            string workmailFromDomain = System.Environment.GetEnvironmentVariable("WORKMAIL_FROM_DOMAIN") ?? throw new ArgumentNullException("WORKMAIL_FROM_DOMAIN");
 
             // Se crea hosted zone...
             HostedZone = new(this, $"{appName}HostedZone", new HostedZoneProps {
@@ -32,6 +34,18 @@ namespace Cdk {
                 DomainName = domainName,
                 SubjectAlternativeNames = alternativeNames.Split(","),
                 Validation = CertificateValidation.FromDns(HostedZone),
+            });
+
+            IPublicHostedZone publicHostedZone = PublicHostedZone.FromPublicHostedZoneAttributes(this, $"{appName}PublicHostedZone", new PublicHostedZoneAttributes {
+                ZoneName = HostedZone.ZoneName,
+                HostedZoneId = HostedZone.HostedZoneId,
+            });
+
+            // Se crea email identity para envío de correos...
+            EmailIdentity emailIdentity = new(this, $"{appName}EmailIdentity", new EmailIdentityProps {
+                Identity = Identity.PublicHostedZone(publicHostedZone),
+                MailFromDomain = workmailFromDomain,
+                MailFromBehaviorOnMxFailure = MailFromBehaviorOnMxFailure.USE_DEFAULT_VALUE,
             });
         }
     }
