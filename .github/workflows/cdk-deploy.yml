@@ -26,6 +26,7 @@ jobs:
             WORKMAIL_FROM_DOMAIN: ${{ vars.WORKMAIL_FROM_DOMAIN }}
             DMARC_VALUE: ${{ vars.DMARC_VALUE }}
             OWNERSHIP_TXT_RECORD: ${{ vars.OWNERSHIP_TXT_RECORD }}
+            APIGATEWAY_DOMAIN_NAME: ${{ vars.APIGATEWAY_DOMAIN_NAME }}
         steps:
             - name: Checkout Repositorio
               uses: actions/checkout@v4
