@@ -1,4 +1,5 @@
 using Amazon.CDK;
+using Amazon.CDK.AWS.Apigatewayv2;
 using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.CloudFront;
 using Amazon.CDK.AWS.CloudFront.Origins;
@@ -23,7 +24,9 @@ namespace Cdk
             string buildDirectory = System.Environment.GetEnvironmentVariable("BUILD_DIR") ?? throw new ArgumentNullException("BUILD_DIR");
             string mailFromDomain = System.Environment.GetEnvironmentVariable("MAIL_FROM_DOMAIN") ?? throw new ArgumentNullException("MAIL_FROM_DOMAIN");
             string dmarcValue = System.Environment.GetEnvironmentVariable("DMARC_VALUE") ?? throw new ArgumentNullException("DMARC_VALUE");
-
+            string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
+            string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
+            string apigatewayDomainName = System.Environment.GetEnvironmentVariable("APIGATEWAY_DOMAIN_NAME") ?? throw new ArgumentNullException("APIGATEWAY_DOMAIN_NAME");
 
             // Se crea bucket donde se almacenará aplicación frontend...  
             Bucket bucket = new(this, $"{appName}LandingPageS3Bucket", new BucketProps {
@@ -95,6 +98,28 @@ namespace Cdk
                 Zone = props.HostedZone,
                 RecordName = $"_dmarc.{props.HostedZone.ZoneName}",
                 Values = [dmarcValue]
+            });
+
+            // Se crea certificado en la misma region...
+            Certificate certificate = new(this, $"{appName}Certificate", new CertificateProps {
+                CertificateName = $"{appName}Certificate",
+                DomainName = domainName,
+                SubjectAlternativeNames = alternativeNames.Split(","),
+                Validation = CertificateValidation.FromDns(props.HostedZone),
+            });
+
+            // Se crea el dominio al API Gateway
+            DomainName domain = new DomainName(this, $"{appName}DomainName", new DomainNameProps {
+                DomainName = apigatewayDomainName,
+                Certificate = certificate,
+                EndpointType = EndpointType.REGIONAL,
+            });
+
+            // Se crea el ARecord para el subdominio del API Gateway
+            _ = new ARecord(this, $"{appName}ARecord", new ARecordProps {
+                Zone = props.HostedZone,
+                RecordName = apigatewayDomainName,
+                Target = RecordTarget.FromAlias(new ApiGatewayv2DomainProperties(domain.RegionalDomainName, domain.RegionalHostedZoneId))
             });
         }
     }
