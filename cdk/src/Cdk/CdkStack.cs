@@ -112,7 +112,7 @@ namespace Cdk
             DomainName domain = new DomainName(this, $"{appName}DomainName", new DomainNameProps {
                 DomainName = apigatewayDomainName,
                 Certificate = certificate,
-                EndpointType = EndpointType.REGIONAL,
+                EndpointType = EndpointType.EDGE,
             });
 
             // Se crea el ARecord para el subdominio del API Gateway
