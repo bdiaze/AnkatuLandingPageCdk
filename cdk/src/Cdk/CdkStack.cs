@@ -82,10 +82,11 @@ namespace Cdk
                 });
             }
 
-            // Se crea registro para verificación de dominio en Google...
-            _ = new TxtRecord(this, $"{appName}GoogleVerificationTXTRecord", new TxtRecordProps {
+            // Se crea registro TXT para verificación de dominio en Google y SPF1 de MAIL...
+            _ = new TxtRecord(this, $"{appName}TXTRecord", new TxtRecordProps {
                 Zone = props.HostedZone,
-                Values = [googleSiteVerification],
+                RecordName = props.HostedZone.ZoneName,
+                Values = [googleSiteVerification, "v=spf1 include:amazonses.com ~all"],
             });
 
             IPublicHostedZone publicHostedZone = PublicHostedZone.FromPublicHostedZoneAttributes(this, $"{appName}PublicHostedZone", new PublicHostedZoneAttributes {

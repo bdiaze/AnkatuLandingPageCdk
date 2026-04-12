@@ -50,12 +50,6 @@ namespace Cdk {
             });
 
             // Para integración con WorkMail se crean registros en DNS...
-            _ = new TxtRecord(this, $"{appName}SPF1TXTRecord", new TxtRecordProps {
-                Zone = HostedZone,
-                RecordName = HostedZone.ZoneName,
-                Values = ["v=spf1 include:amazonses.com ~all"]
-            });
-
             _ = new MxRecord(this, $"{appName}MXRecord", new MxRecordProps {
                 Zone = HostedZone,
                 RecordName = HostedZone.ZoneName,
