@@ -27,6 +27,7 @@ namespace Cdk
             string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
             string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
             string apigatewayDomainName = System.Environment.GetEnvironmentVariable("APIGATEWAY_DOMAIN_NAME") ?? throw new ArgumentNullException("APIGATEWAY_DOMAIN_NAME");
+            string googleSiteVerification = System.Environment.GetEnvironmentVariable("GOOGLE_SITE_VERIFICATION") ?? throw new ArgumentNullException("GOOGLE_SITE_VERIFICATION");          
 
             // Se crea bucket donde se almacenará aplicación frontend...  
             Bucket bucket = new(this, $"{appName}LandingPageS3Bucket", new BucketProps {
@@ -80,6 +81,12 @@ namespace Cdk
                     Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
                 });
             }
+
+            // Se crea registro para verificación de dominio en Google...
+            _ = new TxtRecord(this, $"{appName}GoogleVerificationTXTRecord", new TxtRecordProps {
+                Zone = props.HostedZone,
+                Values = [googleSiteVerification],
+            });
 
             IPublicHostedZone publicHostedZone = PublicHostedZone.FromPublicHostedZoneAttributes(this, $"{appName}PublicHostedZone", new PublicHostedZoneAttributes {
                 ZoneName = props.HostedZone.ZoneName,
