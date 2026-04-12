@@ -27,7 +27,8 @@ namespace Cdk
             string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
             string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
             string apigatewayDomainName = System.Environment.GetEnvironmentVariable("APIGATEWAY_DOMAIN_NAME") ?? throw new ArgumentNullException("APIGATEWAY_DOMAIN_NAME");
-            string googleSiteVerification = System.Environment.GetEnvironmentVariable("GOOGLE_SITE_VERIFICATION") ?? throw new ArgumentNullException("GOOGLE_SITE_VERIFICATION");          
+            string googleSiteVerification = System.Environment.GetEnvironmentVariable("GOOGLE_SITE_VERIFICATION") ?? throw new ArgumentNullException("GOOGLE_SITE_VERIFICATION");
+            string googleDkimValue = System.Environment.GetEnvironmentVariable("GOOGLE_DKIM_VALUE") ?? throw new ArgumentNullException("GOOGLE_DKIM_VALUE");
 
             // Se crea bucket donde se almacenará aplicación frontend...  
             Bucket bucket = new(this, $"{appName}LandingPageS3Bucket", new BucketProps {
@@ -97,6 +98,13 @@ namespace Cdk
                     HostName = $"smtp.google.com.",
                     Priority = 1
                 }]
+            });
+
+            // Se crea registro DKIM para Google Workspace...
+            _ = new TxtRecord(this, $"{appName}DKIMRecord", new TxtRecordProps {
+                Zone = props.HostedZone,
+                RecordName = $"google._domainkey.{props.HostedZone.ZoneName}",
+                Values = [googleDkimValue],
             });
 
             IPublicHostedZone publicHostedZone = PublicHostedZone.FromPublicHostedZoneAttributes(this, $"{appName}PublicHostedZone", new PublicHostedZoneAttributes {
