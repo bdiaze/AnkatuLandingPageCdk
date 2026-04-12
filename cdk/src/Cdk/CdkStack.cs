@@ -86,7 +86,17 @@ namespace Cdk
             _ = new TxtRecord(this, $"{appName}TXTRecord", new TxtRecordProps {
                 Zone = props.HostedZone,
                 RecordName = props.HostedZone.ZoneName,
-                Values = [googleSiteVerification, "v=spf1 include:amazonses.com ~all"],
+                Values = [googleSiteVerification, "v=spf1 include:_spf.google.com include:amazonses.com ~all"],
+            });
+
+            // Se crea registro MX para integración con Google Workspace...
+            _ = new MxRecord(this, $"{appName}MXRecord", new MxRecordProps {
+                Zone = props.HostedZone,
+                RecordName = props.HostedZone.ZoneName,
+                Values = [new MxRecordValue {
+                    HostName = $"smtp.google.com.",
+                    Priority = 1
+                }]
             });
 
             IPublicHostedZone publicHostedZone = PublicHostedZone.FromPublicHostedZoneAttributes(this, $"{appName}PublicHostedZone", new PublicHostedZoneAttributes {

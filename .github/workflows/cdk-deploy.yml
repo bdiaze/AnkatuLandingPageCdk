@@ -23,9 +23,7 @@ jobs:
             ROOT_OBJECT: ${{ vars.ROOT_OBJECT }}
             BUILD_DIR: ${{ vars.BUILD_DIR }}
             MAIL_FROM_DOMAIN: ${{ vars.MAIL_FROM_DOMAIN }}
-            WORKMAIL_FROM_DOMAIN: ${{ vars.WORKMAIL_FROM_DOMAIN }}
             DMARC_VALUE: ${{ vars.DMARC_VALUE }}
-            OWNERSHIP_TXT_RECORD: ${{ vars.OWNERSHIP_TXT_RECORD }}
             APIGATEWAY_DOMAIN_NAME: ${{ vars.APIGATEWAY_DOMAIN_NAME }}
             GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
         steps:

@@ -20,9 +20,7 @@ namespace Cdk {
             string appName = System.Environment.GetEnvironmentVariable("APP_NAME") ?? throw new ArgumentNullException("APP_NAME");
             string domainName = System.Environment.GetEnvironmentVariable("DOMAIN_NAME") ?? throw new ArgumentNullException("DOMAIN_NAME");
             string alternativeNames = System.Environment.GetEnvironmentVariable("ALTERNATIVE_NAMES") ?? throw new ArgumentNullException("ALTERNATIVE_NAMES");
-            string workmailFromDomain = System.Environment.GetEnvironmentVariable("WORKMAIL_FROM_DOMAIN") ?? throw new ArgumentNullException("WORKMAIL_FROM_DOMAIN");
-            string ownershipTxtRecord = System.Environment.GetEnvironmentVariable("OWNERSHIP_TXT_RECORD") ?? throw new ArgumentNullException("OWNERSHIP_TXT_RECORD");
-
+            
             // Se crea hosted zone...
             HostedZone = new(this, $"{appName}HostedZone", new HostedZoneProps {
                 Comment = $"{appName} Hosted Zone",
@@ -35,40 +33,6 @@ namespace Cdk {
                 DomainName = domainName,
                 SubjectAlternativeNames = alternativeNames.Split(","),
                 Validation = CertificateValidation.FromDns(HostedZone),
-            });
-
-            IPublicHostedZone publicHostedZone = PublicHostedZone.FromPublicHostedZoneAttributes(this, $"{appName}PublicHostedZone", new PublicHostedZoneAttributes {
-                ZoneName = HostedZone.ZoneName,
-                HostedZoneId = HostedZone.HostedZoneId,
-            });
-
-            // Se crea email identity para envío de correos...
-            EmailIdentity emailIdentity = new(this, $"{appName}EmailIdentity", new EmailIdentityProps {
-                Identity = Identity.PublicHostedZone(publicHostedZone),
-                MailFromDomain = workmailFromDomain,
-                MailFromBehaviorOnMxFailure = MailFromBehaviorOnMxFailure.USE_DEFAULT_VALUE,
-            });
-
-            // Para integración con WorkMail se crean registros en DNS...
-            _ = new MxRecord(this, $"{appName}MXRecord", new MxRecordProps {
-                Zone = HostedZone,
-                RecordName = HostedZone.ZoneName,
-                Values = [new MxRecordValue {
-                    HostName = $"inbound-smtp.us-east-1.amazonaws.com.",
-                    Priority = 10
-                }]
-            });
-
-            _ = new CnameRecord(this, $"{appName}CNAMEAutodiscoverRecord", new CnameRecordProps {
-                Zone = HostedZone,
-                RecordName = $" autodiscover.{HostedZone.ZoneName}",
-                DomainName = "autodiscover.mail.us-east-1.awsapps.com."
-            });
-
-            _ = new TxtRecord(this, $"{appName}OwnershipTXTRecord", new TxtRecordProps {
-                Zone = HostedZone,
-                RecordName = $"_amazonses.{HostedZone.ZoneName}",
-                Values = [ownershipTxtRecord]
             });
         }
     }
