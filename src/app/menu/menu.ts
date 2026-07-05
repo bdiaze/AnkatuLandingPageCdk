@@ -6,7 +6,7 @@ import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 @Component({
     selector: 'app-menu',
     standalone: true,
-    imports: [HlmButton, HlmButtonImports, HlmSeparatorImports],
+    imports: [HlmButtonImports, HlmSeparatorImports],
     templateUrl: './menu.html',
     styleUrl: './menu.scss',
 })
