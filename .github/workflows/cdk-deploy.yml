@@ -42,16 +42,16 @@ jobs:
                   node-version: ${{ vars.VERSION_NODEJS }}
 
             - name: Install pnpm
-              run: npm install -g pnpm
+              run: npm install --ignore-scripts -g pnpm@11.5.0
 
             - name: Install Dependencies
-              run: pnpm install
+              run: pnpm install --ignore-scripts
 
             - name: Build Angular Application
               run: pnpm run-script build
 
             - name: Instalar AWS CDK
-              run: npm install -g aws-cdk
+              run: npm install --ignore-scripts -g aws-cdk@2.1125.0
 
             - name: Configure AWS Credentials
               uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
